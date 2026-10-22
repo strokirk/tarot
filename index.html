@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tarot Muse</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=EB+Garamond:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header>
+    <h1>Tarot Muse</h1>
+    <p class="tagline">Pull a card. Let it point somewhere.</p>
+    <form id="controls">
+      <label class="field">
+        <span>Spread</span>
+        <select id="spread"></select>
+      </label>
+      <label class="toggle"><input type="checkbox" id="reversals"> <span>Reversals</span></label>
+      <label class="toggle"><input type="checkbox" id="major"> <span>Major Arcana only</span></label>
+      <button type="submit" id="draw">Shuffle &amp; draw</button>
+    </form>
+    <p id="spread-desc" class="spread-desc"></p>
+  </header>
+
+  <main>
+    <section id="table" aria-label="Card table">
+      <div id="deck" aria-hidden="true"></div>
+      <p id="hint" class="hint">Press <kbd>Space</kbd> or the button to draw</p>
+    </section>
+
+    <section id="reading" aria-live="polite" hidden>
+      <div class="reading-head">
+        <h2 id="reading-title">Your reading</h2>
+        <button type="button" id="copy" class="ghost">Copy as text</button>
+      </div>
+      <ol id="entries"></ol>
+    </section>
+  </main>
+
+  <footer>
+    Art: Pamela Colman Smith for the Rider–Waite–Smith deck (1909). Public domain, via
+    <a href="https://commons.wikimedia.org/wiki/Category:Rider-Waite_tarot_deck">Wikimedia Commons</a>.
+    Meanings are for creative play.
+  </footer>
+
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <pattern id="stars" width="14" height="14" patternUnits="userSpaceOnUse">
+        <circle cx="3" cy="3" r=".7" fill="#d9b45a" opacity=".55"/>
+        <circle cx="10" cy="9" r=".45" fill="#d9b45a" opacity=".4"/>
+      </pattern>
+    </defs>
+  </svg>
+
+  <template id="card-back">
+    <svg viewBox="0 0 100 172" preserveAspectRatio="none" aria-hidden="true">
+      <rect x="5" y="5" width="90" height="162" rx="5" fill="url(#stars)" stroke="currentColor" stroke-width="1.2"/>
+      <rect x="9" y="9" width="82" height="154" rx="3" fill="none" stroke="currentColor" stroke-width=".5" opacity=".7"/>
+      <g transform="translate(50 86)" fill="none" stroke="currentColor">
+        <circle r="22" stroke-width=".8"/>
+        <circle r="16" stroke-width=".5" opacity=".7"/>
+        <path d="M0-30 L5-5 L30 0 L5 5 L0 30 L-5 5 L-30 0 L-5-5Z" fill="currentColor" stroke="none" opacity=".9"/>
+        <path d="M-21-21 L-3-3 M21-21 L3-3 M-21 21 L-3 3 M21 21 L3 3" stroke-width=".6" opacity=".8"/>
+      </g>
+      <path d="M50 22 a7 7 0 1 0 6 11 a5.5 5.5 0 1 1 -6 -11z" fill="currentColor"/>
+      <path d="M50 150 a7 7 0 1 1 -6 -11 a5.5 5.5 0 1 0 6 11z" fill="currentColor"/>
+    </svg>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
