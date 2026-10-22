@@ -4,7 +4,7 @@ const $ = (sel) => document.querySelector(sel);
 const table = $("#table");
 const deckEl = $("#deck");
 const hint = $("#hint");
-const RATIO = 1.72;
+const RATIO = 1.7; // card height / width, paper margin included; keep in sync with --ratio in style.css
 const STACK = 7;
 const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
 const ms = (t) => (reduceMotion ? 1 : t);

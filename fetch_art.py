@@ -1,12 +1,17 @@
 #!/usr/bin/env python3
-"""Download the public-domain Rider–Waite–Smith card scans from Wikimedia Commons into img/.
+"""Build img/ from the public-domain Rider–Waite–Smith scans on Wikimedia Commons.
 
-One-off helper; the images are committed, so you only need this to re-fetch or change the size.
-Needs Pillow. Usage: python3 fetch_art.py [--width 400] [--force]
+Two steps:
+  1. Download each full-size original into originals/, unless it is already there.
+     The originals are committed, so normally nothing is downloaded and Commons is left alone.
+  2. Process every original into img/: trim to the black frame line (the web app draws the
+     rounded card margin itself) and resize.
+
+Re-run freely to experiment with processing. Needs Pillow.
+Usage: python3 fetch_art.py [--width 400]
 """
 import argparse
 import hashlib
-import io
 import json
 import time
 import urllib.parse
@@ -14,6 +19,8 @@ import urllib.request
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+ORIGINALS = HERE / "originals"
+IMG = HERE / "img"
 UA = "tarot-deck/0.1 (https://github.com/strokirk/00-random)"
 MAJORS = ["00 Fool", "01 Magician", "02 High Priestess", "03 Empress", "04 Emperor", "05 Hierophant",
           "06 Lovers", "07 Chariot", "08 Strength", "09 Hermit", "10 Wheel of Fortune", "11 Justice",
@@ -47,31 +54,79 @@ def original_url(name):
     return f"https://upload.wikimedia.org/wikipedia/commons/{h[0]}/{h[:2]}/{urllib.parse.quote(name)}"
 
 
-def main():
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--width", type=int, default=400)
-    ap.add_argument("--force", action="store_true")
-    args = ap.parse_args()
-    cards = json.loads((HERE / "deck.json").read_text())["cards"]
-    (HERE / "img").mkdir(exist_ok=True)
-    todo = [c for c in cards if args.force or not (HERE / "img" / f"{c['id']}.jpg").exists()]
-    from PIL import Image
-
+def download(cards):
+    ORIGINALS.mkdir(exist_ok=True)
     missing = []
-    for c in todo:
+    for c in cards:
+        dest = ORIGINALS / f"{c['id']}.jpg"
+        if dest.exists():
+            continue
         try:
-            raw = get(original_url(commons_name(c)))
+            dest.write_bytes(get(original_url(commons_name(c))))
         except urllib.error.HTTPError as err:
             missing.append(f"{commons_name(c)} ({err.code})")
             continue
-        dest = HERE / "img" / f"{c['id']}.jpg"
-        img = Image.open(io.BytesIO(raw)).convert("RGB")
-        img.thumbnail((args.width, args.width * 2), Image.LANCZOS)
-        img.save(dest, "JPEG", quality=82, optimize=True, progressive=True)
-        print(f"{c['id']:<14} {dest.stat().st_size // 1024:>4} KB  {commons_name(c)}")
+        print(f"downloaded {c['id']:<14} {dest.stat().st_size // 1024:>5} KB  {commons_name(c)}")
         time.sleep(0.5)
     if missing:
         print("Not found on Commons:", ", ".join(missing))
+
+
+def border_box(img, dark=110, fill=0.5):
+    """Bounding box of the card's black frame line: from each side, the first row or column that is mostly dark."""
+    g = img.convert("L")
+    w, h = g.size
+    px = g.load()
+
+    def is_dark_row(y):
+        xs = range(w // 5, w - w // 5)
+        return sum(px[x, y] < dark for x in xs) > fill * len(xs)
+
+    def is_dark_col(x):
+        ys = range(h // 5, h - h // 5)
+        return sum(px[x, y] < dark for y in ys) > fill * len(ys)
+
+    def frame(lines, is_dark, fallback, thickness=4):
+        # Some scans start with a dark scanner edge, or have a thin one out in the paper margin. Skip past the
+        # leading one, then take the first run of `thickness` dark lines: the frame is thicker than a scan edge.
+        dark = [is_dark(n) for n in lines]
+        start = next((i for i, d in enumerate(dark) if not d), 0)
+        for i in range(start, len(dark) - thickness):
+            if all(dark[i:i + thickness]):
+                return lines[i]
+        return fallback
+
+    limit = 0.1  # the frame is never further in than this; fall back to no crop on that side
+    top = frame(range(int(h * limit)), is_dark_row, 0)
+    bottom = frame(range(h - 1, int(h * (1 - limit)), -1), is_dark_row, h - 1)
+    left = frame(range(int(w * limit)), is_dark_col, 0)
+    right = frame(range(w - 1, int(w * (1 - limit)), -1), is_dark_col, w - 1)
+    return left, top, right + 1, bottom + 1
+
+
+def process(cards, width):
+    from PIL import Image
+
+    IMG.mkdir(exist_ok=True)
+    for c in cards:
+        src = ORIGINALS / f"{c['id']}.jpg"
+        if not src.exists():
+            continue
+        img = Image.open(src).convert("RGB")
+        box = border_box(img)
+        img = img.crop(box)
+        img.thumbnail((width, width * 2), Image.LANCZOS)
+        img.save(IMG / f"{c['id']}.jpg", "JPEG", quality=82, optimize=True, progressive=True)
+        print(f"processed  {c['id']:<14} crop={box} -> {img.size[0]}x{img.size[1]}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--width", type=int, default=400)
+    args = ap.parse_args()
+    cards = json.loads((HERE / "deck.json").read_text())["cards"]
+    download(cards)
+    process(cards, args.width)
 
 
 if __name__ == "__main__":

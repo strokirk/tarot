@@ -35,4 +35,6 @@ The app is static (`index.html`, `style.css`, `app.js`). It fetches `deck.json`,
 
 ## Art
 
-`img/` holds 400px-wide copies of the Commons scans. `./fetch_art.py --force` re-downloads them (needs Pillow).
+`originals/` holds the full-size scans from Wikimedia Commons, committed so they never need fetching again. `img/` is generated from them: each scan is trimmed to its black frame line and resized to 400px wide. The web app draws the paper margin and rounded corners itself, so every card looks the same whatever its scan's edges were like.
+
+`./fetch_art.py` downloads any missing originals (normally none), then regenerates `img/` from them, entirely offline. Re-run it as often as you like while you experiment with processing. It needs Pillow.
