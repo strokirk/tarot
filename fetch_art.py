@@ -21,7 +21,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ORIGINALS = HERE / "originals"
 IMG = HERE / "img"
-UA = "tarot-deck/0.1 (https://github.com/strokirk/00-random)"
+UA = "tarot-deck/0.1 (https://github.com/strokirk/tarot)"
 MAJORS = ["00 Fool", "01 Magician", "02 High Priestess", "03 Empress", "04 Emperor", "05 Hierophant",
           "06 Lovers", "07 Chariot", "08 Strength", "09 Hermit", "10 Wheel of Fortune", "11 Justice",
           "12 Hanged Man", "13 Death", "14 Temperance", "15 Devil", "16 Tower", "17 Star", "18 Moon",

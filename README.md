@@ -1,6 +1,6 @@
 # Tarot Muse
 
-A tarot deck for creative inspiration. Pull a card, read its imagery, keywords and prompt, and let it push an idea somewhere new. It has a CLI for humans and agents and a web app with a shuffle-and-deal animation.
+A tarot deck for creative inspiration. Pull a card, read its imagery, keywords and prompt, and let it push an idea somewhere new. It has a CLI for humans and agents and a web app with a shuffle-and-deal animation, live at https://strokirk.github.io/tarot/.
 
 All 78 cards use the public-domain Rider–Waite–Smith art (Pamela Colman Smith, 1909, via Wikimedia Commons). Each card has an imagery description, upright and reversed keywords and meanings, and a creative writing prompt. Everything lives in `deck.json`, which both interfaces share.
 

@@ -178,7 +178,12 @@ function makeCard(pull, pos, index, slot, size, showPos) {
     dealt.forEach((d) => d.el.classList.toggle("active", d.el === el));
   };
   el.addEventListener("click", reveal);
-  el.addEventListener("keydown", (ev) => { if (ev.key === "Enter") reveal(); });
+  el.addEventListener("keydown", (ev) => {
+    if (ev.key !== "Enter" && ev.key !== " ") return;
+    ev.preventDefault();
+    ev.stopPropagation(); // Space on a card activates it rather than starting a new draw
+    reveal();
+  });
   return el;
 }
 
@@ -353,7 +358,7 @@ async function init() {
     sel.append(new Option(`${s.name} (${s.positions.length})`, key));
   }
   const prefs = loadPrefs();
-  if (prefs.spread in DECK.spreads) sel.value = prefs.spread;
+  if (Object.hasOwn(DECK.spreads, prefs.spread ?? "")) sel.value = prefs.spread;
   $("#reversals").checked = !!prefs.reversals;
   $("#major").checked = !!prefs.major;
   const describe = () => { $("#spread-desc").textContent = currentSpread().description; };
