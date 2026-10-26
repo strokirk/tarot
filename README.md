@@ -31,7 +31,7 @@ Spreads: `single`, `three`, `sao` (situation/action/outcome), `story`, `cross`, 
 
 Choose a spread and turn reversals or Major-only on if you want them. Then press **Shuffle & draw** or <kbd>Space</kbd>. The deck riffles, deals the cards into the spread and flips them one by one. Upside-down cards land reversed. Click a card to jump to its entry in the reading. **Copy as text** copies the reading so you can paste it elsewhere. You can deep-link a setup with `?spread=celtic&reversals=1&major=0`.
 
-The app is static (`index.html`, `style.css`, `app.js`). It fetches `deck.json`, so it has to be served over HTTP; opening the file directly won't work.
+The app is static (`index.html`, `style.css`, `app.js`). It fetches `deck.json`, so it has to be served over HTTP; opening the file directly won't work. `sw.js` caches everything, so once installed it works offline. It serves cached files first and refreshes them in the background, so while developing, reload twice to see a change.
 
 ## Art
 
