@@ -201,7 +201,7 @@ function makeEntry(pull, pos, index, showPos) {
   li.id = `entry-${index}`;
   const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
   li.innerHTML = `
-    <img src="img/${card.id}.jpg" alt="">
+    <button type="button" class="zoom" aria-label="Enlarge ${esc(card.name)}"><img src="img/${card.id}.jpg" alt=""></button>
     <div>
       ${showPos ? `<p class="pos">${index + 1}. ${esc(pos.name)} <small>— ${esc(pos.meaning)}</small></p>` : ""}
       <h3>${esc(card.name)}${reversed ? '<span class="rev">reversed</span>' : ""}</h3>
@@ -389,6 +389,17 @@ async function init() {
     }
     setTimeout(() => ($("#copy").textContent = "Copy as text"), 1500);
   });
+  const zoom = $("#zoom");
+  $("#entries").addEventListener("click", (ev) => {
+    const btn = ev.target.closest(".zoom");
+    if (!btn) return;
+    const img = zoom.querySelector("img");
+    img.src = btn.querySelector("img").src;
+    img.alt = btn.getAttribute("aria-label").replace("Enlarge ", "");
+    zoom.classList.toggle("reversed", !!btn.closest(".entry.reversed"));
+    zoom.showModal();
+  });
+  zoom.addEventListener("click", () => zoom.close());
   let t;
   addEventListener("resize", () => { clearTimeout(t); t = setTimeout(relayout, 150); });
 }

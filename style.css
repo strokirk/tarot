@@ -264,6 +264,15 @@ kbd {
 
 .entry img { width: 96px; padding: 4px; border-radius: 6px; background: var(--paper); display: block; box-shadow: 0 4px 12px #0007; }
 .entry.reversed img { transform: rotate(180deg); }
+.zoom { padding: 0; border: 0; background: none; border-radius: 6px; cursor: zoom-in; align-self: start; }
+
+#zoom { padding: 0; border: 0; background: none; max-width: 92vw; max-height: 92dvh; overflow: visible; cursor: zoom-out; }
+#zoom::backdrop { background: #0d0b1acc; backdrop-filter: blur(4px); }
+#zoom img {
+  display: block; max-width: min(400px, 92vw); max-height: 92dvh;
+  padding: 10px; border-radius: 12px; background: var(--paper); box-shadow: var(--shadow);
+}
+#zoom.reversed img { transform: rotate(180deg); }
 .pos { font-family: var(--display); color: var(--gold); font-size: 13px; letter-spacing: .08em; text-transform: uppercase; margin: 0; }
 .pos small { font-family: var(--body); text-transform: none; letter-spacing: 0; color: var(--muted); font-size: 15px; }
 .entry h3 { margin: 2px 0 2px; font-size: 24px; font-weight: 600; }
