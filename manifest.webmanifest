@@ -1,0 +1,15 @@
+{
+  "name": "Tarot Muse",
+  "short_name": "Tarot",
+  "description": "Pull a card. Let it point somewhere.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0d0b1a",
+  "theme_color": "#0d0b1a",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}
